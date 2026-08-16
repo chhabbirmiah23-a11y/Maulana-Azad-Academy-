@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://chhabbirmiah23-a11y.github.io/Maulana-Azad-Academy-/sitemap.xml
