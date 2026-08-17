@@ -14,7 +14,4 @@ import { login } from "./firebase-common.js";
 const form=document.getElementById("form"), msg=document.getElementById("msg");
 form.addEventListener("submit",async e=>{e.preventDefault();msg.textContent="Signing in...";
 try{await login(document.getElementById("email").value.trim(),document.getElementById("password").value)}
-catch(err){
-  console.error("LOGIN ERROR:", err);
-  msg.textContent = "Error: " + (err.code || err.message || "Unknown error");
-}
+catch(err){msg.textContent=err.message==="NO_ROLE_PROFILE"||err.message==="INVALID_ROLE"?"Your account is not assigned a valid Academy role. Contact Admin.":"Incorrect email or password."}
