@@ -3,8 +3,88 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Academy Users</title>
+<title>User Management | Maulana Azad Academy</title>
+
 <link rel="stylesheet" href="dashboard.css">
+
+<style>
+.form-box{
+  background:#fff;
+  padding:22px;
+  border-radius:18px;
+  box-shadow:0 8px 30px #0001;
+  margin-bottom:25px;
+}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:15px;
+}
+
+label{
+  font-weight:700;
+  display:block;
+  margin-bottom:6px;
+}
+
+input,select{
+  width:100%;
+  padding:11px;
+  border:1px solid #ccd8d3;
+  border-radius:9px;
+  box-sizing:border-box;
+  font-size:15px;
+}
+
+button{
+  border:0;
+  border-radius:9px;
+  padding:11px 18px;
+  cursor:pointer;
+  font-weight:700;
+}
+
+.primary{
+  background:#087455;
+  color:white;
+  margin-top:18px;
+}
+
+.danger{
+  background:#b42318;
+  color:white;
+  padding:7px 12px;
+}
+
+.table-wrap{
+  overflow-x:auto;
+  background:#fff;
+  border-radius:18px;
+  box-shadow:0 8px 30px #0001;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:700px;
+}
+
+th,td{
+  padding:12px;
+  border-bottom:1px solid #eee;
+  text-align:left;
+}
+
+th{
+  background:#f3f8f6;
+}
+
+.msg{
+  margin-top:12px;
+  font-weight:700;
+}
+</style>
 </head>
 
 <body>
@@ -16,31 +96,303 @@
 
 <main class="wrap">
 
-  <section class="welcome">
-    <h2>👥 Academy Users</h2>
-    <p class="muted">Student, Teacher and Staff accounts</p>
-  </section>
+<section class="welcome">
+  <h2>👥 User Management</h2>
+  <p class="muted">
+    Manage Student, Teacher and Staff profiles.
+  </p>
+</section>
 
-  <section class="cards">
 
-    <div class="card">
-      <h3>🎓 Students</h3>
-      <p class="muted">Manage student accounts.</p>
-    </div>
+<!-- CREATE PROFILE -->
 
-    <div class="card">
-      <h3>👨‍🏫 Teachers</h3>
-      <p class="muted">Manage teacher accounts.</p>
-    </div>
+<section class="form-box">
 
-    <div class="card">
-      <h3>🧑‍💼 Staff</h3>
-      <p class="muted">Manage staff accounts.</p>
-    </div>
+<h2>➕ Add New Profile</h2>
 
-  </section>
+<div class="form-grid">
+
+<div>
+<label>Full Name</label>
+<input id="name" type="text" placeholder="Enter full name">
+</div>
+
+<div>
+<label>Role</label>
+
+<select id="role">
+<option value="student">Student</option>
+<option value="teacher">Teacher</option>
+<option value="staff">Staff</option>
+</select>
+
+</div>
+
+<div>
+<label>Email</label>
+<input id="email" type="email" placeholder="Email address">
+</div>
+
+<div>
+<label>Phone</label>
+<input id="phone" type="tel" placeholder="Phone number">
+</div>
+
+<div>
+<label>Student / Staff ID</label>
+<input id="academyId" type="text" placeholder="Academy ID">
+</div>
+
+<div>
+<label>Class / Department</label>
+<input id="classDept" type="text" placeholder="Class or department">
+</div>
+
+</div>
+
+<button id="save" class="primary">
+Save Profile
+</button>
+
+<div id="msg" class="msg"></div>
+
+</section>
+
+
+<!-- USER LIST -->
+
+<section>
+
+<h2>📋 Academy Profiles</h2>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Name</th>
+<th>Role</th>
+<th>Email</th>
+<th>Phone</th>
+<th>ID</th>
+<th>Class / Department</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="userList">
+
+<tr>
+<td colspan="7">Loading...</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
 
 </main>
+
+
+<script type="module">
+
+import {
+  protectPage,
+  db
+} from "./firebase-common.js";
+
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/12.17.1/firebase-firestore.js";
+
+
+const nameInput = document.getElementById("name");
+const roleInput = document.getElementById("role");
+const emailInput = document.getElementById("email");
+const phoneInput = document.getElementById("phone");
+const idInput = document.getElementById("academyId");
+const classInput = document.getElementById("classDept");
+
+const saveButton = document.getElementById("save");
+const msg = document.getElementById("msg");
+const userList = document.getElementById("userList");
+
+
+protectPage("admin", async () => {
+  await loadUsers();
+});
+
+
+async function loadUsers(){
+
+  userList.innerHTML =
+    `<tr><td colspan="7">Loading...</td></tr>`;
+
+  try{
+
+    const q = query(
+      collection(db,"academyProfiles"),
+      orderBy("name")
+    );
+
+    const snapshot = await getDocs(q);
+
+    if(snapshot.empty){
+
+      userList.innerHTML =
+        `<tr><td colspan="7">No profiles found.</td></tr>`;
+
+      return;
+    }
+
+    userList.innerHTML = "";
+
+    snapshot.forEach((item)=>{
+
+      const data = item.data();
+
+      const row = document.createElement("tr");
+
+      row.innerHTML = `
+        <td>${escapeHtml(data.name || "")}</td>
+        <td>${escapeHtml(data.role || "")}</td>
+        <td>${escapeHtml(data.email || "")}</td>
+        <td>${escapeHtml(data.phone || "")}</td>
+        <td>${escapeHtml(data.academyId || "")}</td>
+        <td>${escapeHtml(data.classDept || "")}</td>
+        <td>
+          <button class="danger"
+            data-id="${item.id}">
+            Delete
+          </button>
+        </td>
+      `;
+
+      row.querySelector(".danger").onclick =
+        () => deleteProfile(item.id);
+
+      userList.appendChild(row);
+
+    });
+
+  }catch(error){
+
+    console.error(error);
+
+    userList.innerHTML =
+      `<tr>
+        <td colspan="7">
+          Unable to load profiles.
+        </td>
+      </tr>`;
+  }
+}
+
+
+saveButton.onclick = async () => {
+
+  const name = nameInput.value.trim();
+  const role = roleInput.value;
+  const email = emailInput.value.trim();
+  const phone = phoneInput.value.trim();
+  const academyId = idInput.value.trim();
+  const classDept = classInput.value.trim();
+
+  if(!name){
+
+    msg.textContent = "Please enter the name.";
+    return;
+  }
+
+  saveButton.disabled = true;
+  msg.textContent = "Saving...";
+
+  try{
+
+    await addDoc(
+      collection(db,"academyProfiles"),
+      {
+        name,
+        role,
+        email,
+        phone,
+        academyId,
+        classDept,
+        createdAt: new Date()
+      }
+    );
+
+    msg.textContent = "Profile saved successfully.";
+
+    nameInput.value = "";
+    emailInput.value = "";
+    phoneInput.value = "";
+    idInput.value = "";
+    classInput.value = "";
+
+    await loadUsers();
+
+  }catch(error){
+
+    console.error(error);
+
+    msg.textContent =
+      "Could not save profile: " + error.message;
+
+  }finally{
+
+    saveButton.disabled = false;
+
+  }
+};
+
+
+async function deleteProfile(id){
+
+  if(!confirm("Delete this profile?")){
+    return;
+  }
+
+  try{
+
+    await deleteDoc(
+      doc(db,"academyProfiles",id)
+    );
+
+    await loadUsers();
+
+  }catch(error){
+
+    alert(
+      "Could not delete profile: " +
+      error.message
+    );
+
+  }
+}
+
+
+function escapeHtml(value){
+
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+</script>
 
 </body>
 </html>
