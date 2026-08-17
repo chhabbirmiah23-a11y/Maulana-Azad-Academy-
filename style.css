@@ -114,3 +114,36 @@
     font-size: 1rem;
   }
 }
+/* STAFF CATEGORY */
+
+.staff-category {
+  max-width: 1150px;
+  margin: 45px auto 22px;
+  text-align: center;
+}
+
+.staff-category h3 {
+  display: inline-block;
+  margin: 0;
+  padding: 10px 35px;
+  background: linear-gradient(135deg, #0b6b46, #0b3d91);
+  color: #fff;
+  border-radius: 50px;
+  font-size: 1.25rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,.12);
+}
+
+.office-category {
+  margin-top: 55px;
+}
+
+.teacher-info p {
+  margin: 4px 0;
+  color: #667085;
+  font-size: .86rem;
+  line-height: 1.5;
+}
+
+.teacher-info p strong {
+  color: #344054;
+}
