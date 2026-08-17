@@ -46,7 +46,7 @@ export async function getUserProfile(user) {
   const snap = await getDocFromServer(userRef);
 
   if (!snap.exists()) {
-    throw new Error("NO_ROLE_PROFILE");
+  throw new Error("NO_ROLE_PROFILE | UID: " + user.uid);
   }
 
   const data = snap.data();
