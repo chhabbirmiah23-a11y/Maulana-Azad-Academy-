@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login Portal | Maulana Azad Academy</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef8f4,#f7fbff);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
+.portal{width:100%;max-width:1050px;background:#fff;border-radius:24px;padding:30px;box-shadow:0 15px 45px rgba(0,0,0,.1)}
+.head{text-align:center}.head h1{margin:0;color:#087455;font-size:30px}.head p{color:#666}
+.roles{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:25px}
+.role{text-align:center;border:1px solid #e0e8e4;border-radius:18px;padding:20px;background:#fbfdfc}
+.icon{font-size:40px}.role h2{color:#164c3d;font-size:19px}.role p{color:#777;font-size:14px;min-height:38px}
+button{border:0;border-radius:10px;background:#087455;color:#fff;padding:11px 20px;font-weight:bold;cursor:pointer}
+.login-box{display:none;max-width:430px;margin:28px auto 0;padding:24px;border:1px solid #dfe8e4;border-radius:18px;background:#fafdfb}
+.login-box.active{display:block}.login-box h2{text-align:center;color:#087455}
+label{display:block;margin:14px 0 6px;font-weight:bold;font-size:14px}
+input{width:100%;padding:12px;border:1px solid #ccd8d3;border-radius:9px;font-size:16px}
+.submit{width:100%;margin-top:20px}.msg{text-align:center;font-size:14px;margin-top:14px}.note{text-align:center;color:#777;font-size:12px}
+@media(max-width:760px){.roles{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:450px){.roles{grid-template-columns:1fr}.portal{padding:20px}.head h1{font-size:25px}}
+</style>
+</head>
+<body>
+<main class="portal">
+<div class="head">
+<h1>🔐 Login Portal</h1>
+<p><b>MAULANA AZAD ACADEMY</b></p>
+<p>Narai, Gangarampur, Dakshin Dinajpur</p>
+</div>
+
+<div class="roles">
+<div class="role"><div class="icon">🎓</div><h2>Student Login</h2><p>Attendance, routine, results and notices.</p><button onclick="showLogin('Student')">Login</button></div>
+<div class="role"><div class="icon">👨‍🏫</div><h2>Teacher Login</h2><p>Academic and attendance information.</p><button onclick="showLogin('Teacher')">Login</button></div>
+<div class="role"><div class="icon">👨‍💼</div><h2>Staff Login</h2><p>Staff information and notices.</p><button onclick="showLogin('Staff')">Login</button></div>
+<div class="role"><div class="icon">🛡️</div><h2>Admin Login</h2><p>Manage users, notices and results.</p><button onclick="showLogin('Admin')">Login</button></div>
+</div>
+
+<section id="loginBox" class="login-box">
+<h2 id="loginTitle">Login</h2>
+<form id="loginForm">
+<label for="email">Email / Login ID</label>
+<input id="email" type="email" required placeholder="Enter registered email">
+
+<label for="password">Password</label>
+<input id="password" type="password" required placeholder="Enter password">
+
+<button class="submit" type="submit">Sign In</button>
+</form>
+<p id="msg" class="msg"></p>
+<p class="note">Secure authentication is handled by Firebase.</p>
+</section>
+</main>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDp1MrBJFzQbAX9fUuEUA5Br3Jfk7mSfLk",
+  authDomain: "maulana-azad-academy.firebaseapp.com",
+  projectId: "maulana-azad-academy",
+  storageBucket: "maulana-azad-academy.firebasestorage.app",
+  messagingSenderId: "955425115911",
+  appId: "1:955425115911:web:c3988a53655175611f3fa2",
+  measurementId: "G-QJNC3JBMCL"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+let selectedRole = "";
+
+window.showLogin = function(role){
+  selectedRole = role;
+  document.getElementById("loginTitle").textContent = role + " Login";
+  document.getElementById("msg").textContent = "";
+  const box = document.getElementById("loginBox");
+  box.classList.add("active");
+  box.scrollIntoView({behavior:"smooth",block:"center"});
+};
+
+document.getElementById("loginForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const msg = document.getElementById("msg");
+  msg.textContent = "Signing in...";
+
+  try{
+    await signInWithEmailAndPassword(auth,email,password);
+    msg.textContent = "Login successful. " + selectedRole + " account verified.";
+    setTimeout(()=>{
+      // Dashboard pages can be connected here after role/database setup.
+      alert(selectedRole + " login successful!");
+    },300);
+  }catch(error){
+    let text = "Login failed. Check your email and password.";
+    if(error.code === "auth/user-not-found") text = "No account found with this email.";
+    if(error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") text = "Incorrect email or password.";
+    if(error.code === "auth/invalid-email") text = "Please enter a valid email address.";
+    msg.textContent = text;
+  }
+});
+</script>
+</body>
+</html>
