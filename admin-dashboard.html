@@ -1,8 +1,109 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin Dashboard</title><link rel="stylesheet" href="dashboard.css"></head><body>
-<header class="top"><h1>MAULANA AZAD ACADEMY — Admin</h1><button id="logout" class="logout">Logout</button></header>
-<main class="wrap"><section class="welcome"><h2 id="name">Loading...</h2><p id="email" class="muted"></p></section><section class="cards"><div class="card"><h3>👥 Users</h3><p class="muted">Manage Academy users.</p></div><div class="card"><h3>📝 Results</h3><p class="muted">Manage examination results.</p></div><div class="card"><h3>📢 Notices</h3><p class="muted">Manage Academy notices.</p></div></section></main>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Dashboard | Maulana Azad Academy</title>
+<link rel="stylesheet" href="dashboard.css">
+
+<style>
+.card-link{
+  display:block;
+  text-decoration:none;
+  color:inherit;
+  cursor:pointer;
+  transition:transform .2s, box-shadow .2s;
+}
+
+.card-link:hover{
+  transform:translateY(-4px);
+}
+
+.card-link h3{
+  margin-top:0;
+}
+
+.arrow{
+  margin-top:15px;
+  font-weight:700;
+  color:#087455;
+}
+</style>
+</head>
+
+<body>
+
+<header class="top">
+  <h1>MAULANA AZAD ACADEMY — Admin</h1>
+  <button id="logout" class="logout">Logout</button>
+</header>
+
+<main class="wrap">
+
+  <section class="welcome">
+    <h2 id="name">Loading...</h2>
+    <p id="email" class="muted"></p>
+  </section>
+
+
+  <section class="cards">
+
+    <!-- USERS -->
+    <a href="users.html" class="card card-link">
+      <h3>👥 Users</h3>
+      <p class="muted">
+        Create and manage Student, Teacher and Staff accounts.
+      </p>
+      <div class="arrow">Open Users →</div>
+    </a>
+
+
+    <!-- RESULTS -->
+    <a href="results.html" class="card card-link">
+      <h3>📝 Results</h3>
+      <p class="muted">
+        Manage examination results and academic records.
+      </p>
+      <div class="arrow">Open Results →</div>
+    </a>
+
+
+    <!-- NOTICES -->
+    <a href="notices.html" class="card card-link">
+      <h3>📢 Notices</h3>
+      <p class="muted">
+        Create and manage Academy notices.
+      </p>
+      <div class="arrow">Open Notices →</div>
+    </a>
+
+  </section>
+
+</main>
+
+
 <script type="module">
-import {protectPage,logout} from "./firebase-common.js";
-protectPage("admin",(user,p)=>{document.getElementById("name").textContent="Welcome, "+(p.name||"Admin");document.getElementById("email").textContent=user.email;});
-document.getElementById("logout").onclick=logout;
-</script></body></html>
+
+import {
+  protectPage,
+  logout
+} from "./firebase-common.js";
+
+
+protectPage("admin", (user, profile) => {
+
+  document.getElementById("name").textContent =
+    "Welcome, " + (profile.name || "Admin");
+
+  document.getElementById("email").textContent =
+    user.email;
+
+});
+
+
+document.getElementById("logout").onclick = logout;
+
+</script>
+
+</body>
+</html>
