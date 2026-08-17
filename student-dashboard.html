@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Student Dashboard</title><link rel="stylesheet" href="dashboard.css"></head><body>
+<header class="top"><h1>MAULANA AZAD ACADEMY — Student</h1><button id="logout" class="logout">Logout</button></header>
+<main class="wrap"><section class="welcome"><h2 id="name">Loading...</h2><p id="email" class="muted"></p></section><section class="cards"><div class="card"><h3>📅 Exam Routine</h3><p class="muted">View your examination schedule.</p></div><div class="card"><h3>📝 Results</h3><p class="muted">View academic results.</p></div><div class="card"><h3>📋 Attendance</h3><p class="muted">View attendance information.</p></div></section></main>
+<script type="module">
+import {protectPage,logout} from "./firebase-common.js";
+protectPage("student",(user,p)=>{document.getElementById("name").textContent="Welcome, "+(p.name||"Student");document.getElementById("email").textContent=user.email;});
+document.getElementById("logout").onclick=logout;
+</script></body></html>

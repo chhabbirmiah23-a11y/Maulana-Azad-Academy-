@@ -1,0 +1,8 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Staff Dashboard</title><link rel="stylesheet" href="dashboard.css"></head><body>
+<header class="top"><h1>MAULANA AZAD ACADEMY — Staff</h1><button id="logout" class="logout">Logout</button></header>
+<main class="wrap"><section class="welcome"><h2 id="name">Loading...</h2><p id="email" class="muted"></p></section><section class="cards"><div class="card"><h3>📌 Assigned Work</h3><p class="muted">View assigned duties.</p></div><div class="card"><h3>📢 Notices</h3><p class="muted">View staff notices.</p></div><div class="card"><h3>👤 Profile</h3><p class="muted">View staff account information.</p></div></section></main>
+<script type="module">
+import {protectPage,logout} from "./firebase-common.js";
+protectPage("staff",(user,p)=>{document.getElementById("name").textContent="Welcome, "+(p.name||"Staff");document.getElementById("email").textContent=user.email;});
+document.getElementById("logout").onclick=logout;
+</script></body></html>
